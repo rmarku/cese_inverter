@@ -332,6 +332,17 @@ void timer1_init(void) {
 void NMI_Handler(void) {}
 
 /**
+ * @brief Versión devil del servicio para la aplicación
+ *
+ */
+void __attribute__((weak)) app_1ms();
+
+/**
+ * @brief This function handles System tick timer.
+ */
+void SysTick_Handler(void) { app_1ms(); }
+
+/**
  * @brief Trap para fallas de hardware
  */
 void HardFault_Handler(void) {
@@ -377,11 +388,6 @@ void DebugMon_Handler(void) {}
  * @brief This function handles Pendable request for system service.
  */
 void PendSV_Handler(void) {}
-
-/**
- * @brief This function handles System tick timer.
- */
-void SysTick_Handler(void) {}
 
 /**
  * @brief  Función para errores de las funciones HAL

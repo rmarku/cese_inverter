@@ -2,16 +2,13 @@
   "tasks": [
     {
       "type": "shell",
-      "label": "gcc build active file",
-      "command": "/usr/bin/gcc",
+      "label": "make",
+      "command": "/usr/bin/make",
       "args": [
-        "-g",
-        "${file}",
-        "-o",
-        "${fileDirname}/${fileBasenameNoExtension}"
+        "-j9",
       ],
       "options": {
-        "cwd": "/usr/bin"
+        "cwd": "${workspaceRoot}"
       }
     }
   ],

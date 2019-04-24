@@ -1,7 +1,7 @@
 /**
- * @file bsp.h
+ * @file delay.h
  * @author Ricardo Martín Marcucci
- * @brief Cabecera del BSP para ser incluida por la app como el BSP
+ * @brief Librería en capa de aplicación para gestionar delays
  * @version 0.1
  * @date 2019-04-22
  *
@@ -10,8 +10,8 @@
  */
 
 /*=====[Evitar inclusion multiple comienzo]==================================*/
-#ifndef __BSP_H
-#define __BSP_H
+#ifndef __DELAY_H
+#define __DELAY_H
 
 /*=====[Inclusiones de dependencias de funciones publicas]===================*/
 #include <stdbool.h>
@@ -28,10 +28,19 @@ extern "C" {
 
 /*=====[Definiciones de tipos de datos publicos]=============================*/
 
+typedef uint64_t tick_t;
+
+typedef struct {
+  tick_t endTime;
+  tick_t duration;
+} delay_t;
+
 /*=====[Prototipos de funciones publicas]====================================*/
-void bsp_init();
-void led_toggle();
-void bsp_delay(uint32_t d);
+
+void delayConfig(delay_t *delay, tick_t duracion);
+bool delayEnded(delay_t *delay);
+tick_t getTick();
+void delay_1ms();
 
 /*=====[Prototipos de funciones publicas de interrupcion]====================*/
 
@@ -41,4 +50,4 @@ void bsp_delay(uint32_t d);
 #endif
 
 /*=====[Evitar inclusion multiple fin]=======================================*/
-#endif /* __MAIN_H */
+#endif /* __DELAY_H */
