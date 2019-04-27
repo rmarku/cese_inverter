@@ -29,9 +29,31 @@ extern "C" {
 /*=====[Definiciones de tipos de datos publicos]=============================*/
 
 /*=====[Prototipos de funciones publicas]====================================*/
+
+
+//Servicios del BSP
 void bsp_init();
-void led_toggle();
 void bsp_delay(uint32_t d);
+
+// Servicios de Leds
+void led_toggle();
+void led_on();
+void led_off():
+
+// Servicios del PWM
+void setPWM(uint16_t duty);
+
+// Servicios de la UART
+void uartSend(char c);
+void uartSend(char c);
+bool uartSendReady(char c);
+void uartRecibe(char c);
+bool uartRecibeHasData(char c);
+
+// Funciones de PWM
+
+
+
 
 /*=====[Prototipos de funciones publicas de interrupcion]====================*/
 

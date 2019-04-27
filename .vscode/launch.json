@@ -5,6 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/proyecto-Prog_uC.elf",
+            "name": "Debug Microcontroller",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "bmp",
+            "BMPGDBSerialPort": "/dev/ttyACM0",
+            "targetId": 1,
+            "preLaunchTask": "make",
+        },
+
+        {
             "name": "Debug Magic Probe",
             "type": "cppdbg",
             "request": "launch",

@@ -16,7 +16,10 @@
         "stm32f1xx_ll_gpio.h": "c",
         "chrono": "cpp",
         "cstdbool": "cpp",
-        "delay.h": "c"
+        "delay.h": "c",
+        "stm32f1xx_ll_usart.h": "c",
+        "array": "c",
+        "string_view": "c"
     },
     "C_Cpp.default.includePath":["${workspaceFolder}/hal/CMSIS/Include/","${workspaceFolder}/hal/STM32F1xx_HAL_Driver/Inc/"],
     "C_Cpp.intelliSenseEngine": "Tag Parser"
