@@ -1,7 +1,7 @@
 /**
- * @file bsp.h
+ * @file spwm.h
  * @author Ricardo Martín Marcucci
- * @brief Cabecera del BSP para ser incluida por la app como el BSP
+ * @brief Librería en capa de aplicación para gestionar el PWM
  * @version 0.1
  * @date 2019-04-22
  *
@@ -10,12 +10,13 @@
  */
 
 /*=====[Evitar inclusion multiple comienzo]==================================*/
-#ifndef __BSP_H
-#define __BSP_H
+#ifndef __SPWM_H
+#define __SPWM_H
 
 /*=====[Inclusiones de dependencias de funciones publicas]===================*/
 #include <stdbool.h>
 #include <stdint.h>
+
 
 /*=====[C++ comienzo]========================================================*/
 #ifdef __cplusplus
@@ -28,31 +29,23 @@ extern "C" {
 
 /*=====[Definiciones de tipos de datos publicos]=============================*/
 
+
+typedef struct {
+    uint16_t frecuencia; // en mhz
+    uint64_t last_start;
+} spwm_t;
+
 /*=====[Prototipos de funciones publicas]====================================*/
 
+/*
+    Frecuencia PWM=10kHz = 100uS = period
+    media onda a 50Hz = 20ms/2 =1 0mS
+    10mS/100uS= 100 periodos cada medio ciclo
+*/
 
-//Servicios del BSP
-void bsp_init();
-void bsp_delay(uint32_t d);
+void spwm_init(spwm_t *onda);
 
-// Servicios de Leds
-void led_toggle();
-void led_on();
-void led_off();
-
-// Servicios del PWM
-void setPWM(uint16_t duty);
-uint64_t get_01msTick();
-
-// Servicios de la UART
-void uartSend(char c);
-void uartSend(char c);
-bool uartSendReady(char c);
-void uartRecibe(char c);
-bool uartRecibeHasData(char c);
-
-
-
+void spwm_process(spwm_t *onda);
 
 
 /*=====[Prototipos de funciones publicas de interrupcion]====================*/
@@ -63,4 +56,4 @@ bool uartRecibeHasData(char c);
 #endif
 
 /*=====[Evitar inclusion multiple fin]=======================================*/
-#endif /* __MAIN_H */
+#endif /* __SPWM_H */

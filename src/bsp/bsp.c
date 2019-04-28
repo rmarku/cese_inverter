@@ -69,6 +69,8 @@
 
 /*=====[Definiciones de Variables globales privadas]=========================*/
 
+uint64_t tick_01ms = 0;
+
 /*=====[Prototipos de funciones privadas]====================================*/
 
 void SystemClock_Config(void);
@@ -93,41 +95,52 @@ void setPWM(uint16_t duty) {
 }
 
 /**
- * @brief 
- * 
- * @param c 
+ * @brief
+ *
+ * @param c
  */
 inline void uartSend(char c) {
     LL_USART_TransmitData8(USART1, c);
 }
 /**
- * @brief 
- * 
- * @param c 
- * @return true 
- * @return false 
+ * @brief
+ *
+ * @param c
+ * @return true
+ * @return false
  */
 inline bool uartSendReady(char c) {
     return 1 == LL_USART_IsActiveFlag_TXE(USART1);
 }
 /**
- * @brief 
- * 
- * @param c 
+ * @brief
+ *
+ * @param c
  */
 inline void uartRecibe(char c) {
     LL_USART_ReceiveData8(USART1);
 }
 /**
- * @brief 
- * 
- * @param c 
- * @return true 
- * @return false 
+ * @brief
+ *
+ * @param c
+ * @return true
+ * @return false
  */
 inline bool uartRecibeHasData(char c) {
     return 1 == LL_USART_IsActiveFlag_RXNE(USART1);
 }
+
+/**
+ * @brief retorna el contador de 0.1ms
+ * 
+ */
+uint64_t get_01msTick(){
+    return tick_01ms;
+}
+
+
+
 
 /**
  * @brief Inicializa todos los perifeficos del uC e inicializa los otros
@@ -152,7 +165,7 @@ void bsp_init() {
     timer1_init();
     uart_init();
 
-    // Enable PWM Career
+    // Habilito el PWM
     LL_TIM_CC_EnableChannel(TIM1,
                             LL_TIM_CHANNEL_CH1N); /* Enable output on channel */
     LL_TIM_CC_EnableChannel(TIM1,
@@ -162,40 +175,81 @@ void bsp_init() {
 
     LL_TIM_EnableAllOutputs(TIM1);
 
+    // Habilito el ADC1
+    LL_ADC_Enable(ADC1);
+    LL_ADC_Enable(ADC2);
+
     LL_SYSTICK_EnableIT();
 }
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 void led_toggle() {
     LL_GPIO_TogglePin(GPIOC, LL_GPIO_PIN_13);
 }
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 void led_on() {
     LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_13);
 }
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 void led_off() {
     LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_13);
 }
 
 /**
- * @brief 
- * 
- * @param d 
+ * @brief
+ *
+ * @param d
  */
 void bsp_delay(uint32_t d) {
     LL_mDelay(d);
 }
+
+
+/**
+ * @brief
+ *
+ */
+void adc_ConvertionStart() {
+    LL_ADC_REG_StartConversionSWStart(ADC1);
+}
+
+/**
+ * @brief
+ *
+ */
+bool adc_ConvertionStop() {
+    return 1 == LL_ADC_IsActiveFlag_EOS(ADC1);
+}
+
+/**
+ * @brief
+ *
+ * @return uint16_t
+ */
+uint16_t adc_getData() {
+    return LL_ADC_REG_ReadConversionData12(ADC1);
+}
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @brief Configuración de System Clock
@@ -226,7 +280,8 @@ void SystemClock_Config(void) {
     /* Esperar a que el system clock este estable */
     while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL) {
     }
-    LL_Init1msTick(16000000);
+
+    LL_InitTick(16000000, 10000U);
     LL_SYSTICK_SetClkSource(LL_SYSTICK_CLKSOURCE_HCLK);
     LL_SetSystemCoreClock(16000000);
     LL_RCC_SetADCClockSource(LL_RCC_ADC_CLKSRC_PCLK2_DIV_2);
@@ -374,10 +429,10 @@ void timer1_init(void) {
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM1);
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOA);
     uint32_t TimOutClock = SystemCoreClock / 1;
-    TIM_InitStruct.Prescaler = __LL_TIM_CALC_PSC(SystemCoreClock, 100000);
+    TIM_InitStruct.Prescaler = __LL_TIM_CALC_PSC(SystemCoreClock, 500000);
     TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
     TIM_InitStruct.Autoreload =
-        __LL_TIM_CALC_ARR(TimOutClock, TIM_InitStruct.Prescaler, 1000);
+        __LL_TIM_CALC_ARR(TimOutClock, TIM_InitStruct.Prescaler, 30000);
     TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
     TIM_InitStruct.RepetitionCounter = (uint8_t)0x00;
     LL_TIM_Init(TIM1, &TIM_InitStruct);
@@ -431,7 +486,12 @@ void __attribute__((weak)) app_1ms();
  * @brief This function handles System tick timer.
  */
 void SysTick_Handler(void) {
-    app_1ms();
+    tick_01ms++;
+
+    // cada 10 ticks 1ms
+    if(tick_01ms%10 == 0) {
+        app_1ms();
+    }
 }
 
 /**

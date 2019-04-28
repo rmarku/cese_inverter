@@ -15,6 +15,7 @@
 #include "bsp/bsp.h"
 #include "delay.h"
 #include "buffercircular.h"
+#include "spwm.h"
 
 /*=====[Macros de definicion de constantes privadas]=========================*/
 /*=====[Macros estilo funcion privadas]======================================*/
@@ -34,23 +35,32 @@ int main(void) {
 
     delay_t led;
     delay_t uart;
+
+    spwm_t onda;
     // Inicializo la placa.
     bsp_init();
 
     delayConfig(&led, 500);
     delayConfig(&uart, 2000);
-    uint16_t i=0;
-    // Loop infinito
+    spwm_init(&onda);
+
+    // Loop infinito (Super Loop)
     while (1) {
+        // Blinky
         if (delayEnded(&led)) {
             led_toggle();
-            delayConfig(&led, 100);
-            setPWM(i++%1000);
+            delayNext(&led, 100);
         }
+
+        // Procesado de UART
         if (delayEnded(&uart)) {
-            delayConfig(&uart, 2000);
+            delayNext(&uart, 2000);
             uartSend('A');
         }
+
+        spwm_process(&onda);
+
+        // Procesado maquina de estados
     }
     return 0; // nunca llegaría
 }
@@ -59,6 +69,8 @@ int main(void) {
  * @brief Función llamada por el BSP cada 1ms
  *
  */
-void app_1ms() { delay_1ms(); }
+void app_1ms() {
+    delay_1ms();
+}
 
 /*=====[Implementaciones de funciones privadas]==============================*/

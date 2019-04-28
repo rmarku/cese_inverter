@@ -38,6 +38,7 @@ typedef struct {
 /*=====[Prototipos de funciones publicas]====================================*/
 
 void delayConfig(delay_t *delay, tick_t duracion);
+void delayNext(delay_t *delay, tick_t duracion);
 bool delayEnded(delay_t *delay);
 tick_t getTick();
 void delay_1ms();
