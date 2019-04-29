@@ -47,9 +47,9 @@ uint64_t get_01msTick();
 // Servicios de la UART
 void uartSend(char c);
 void uartSend(char c);
-bool uartSendReady(char c);
-void uartRecibe(char c);
-bool uartRecibeHasData(char c);
+bool uartSendReady();
+char uartRecibe();
+bool uartRecibeHasData();
 
 
 

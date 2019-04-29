@@ -27,7 +27,9 @@
         "ratio": "cpp",
         "system_error": "cpp",
         "type_traits": "cpp",
-        "spwm.h": "c"
+        "spwm.h": "c",
+        "buffercircular.h": "c",
+        "stdbool.h": "c"
     },
     "C_Cpp.default.includePath":["${workspaceFolder}/hal/CMSIS/Include/","${workspaceFolder}/hal/STM32F1xx_HAL_Driver/Inc/"],
     "C_Cpp.intelliSenseEngine": "Tag Parser"

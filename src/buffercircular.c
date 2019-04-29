@@ -1,6 +1,5 @@
-
 #include "buffercircular.h"
-void initializeQueue(bufferc_t *bc) {
+void bc_init(bufferc_t *bc) {
     int i;
     bc->cantidad = 0;
     bc->inicio = 0;
@@ -11,10 +10,16 @@ void initializeQueue(bufferc_t *bc) {
     return;
 }
 
-bool isEmpty(bufferc_t *bc) {  return (bool) bc->cantidad == 0; }
+bool bc_isEmpty(bufferc_t *bc) {
+    return (bool)( bc->cantidad == 0);
+}
 
-int bufferc_put(bufferc_t *bc, char dato) {
-    if (bc->cantidad >= MAX_ITEMS)
+bool bc_isFull(bufferc_t *bc) {
+    return (bool) (bc->cantidad == MAX_ITEMS);
+}
+
+int bc_putItem(bufferc_t *bc, char dato) {
+    if (bc_isFull(bc))
         return -1;
 
     bc->cantidad++;
@@ -23,8 +28,8 @@ int bufferc_put(bufferc_t *bc, char dato) {
     return 0;
 }
 
-int bufferc_pop(bufferc_t *bc, char *dato) {
-    if (isEmpty(bc))
+int bc_getItem(bufferc_t *bc, char *dato) {
+    if (bc_isEmpty(bc))
         return -1;
 
     *dato = bc->data[bc->inicio];

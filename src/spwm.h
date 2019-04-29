@@ -37,16 +37,11 @@ typedef struct {
 
 /*=====[Prototipos de funciones publicas]====================================*/
 
-/*
-    Frecuencia PWM=10kHz = 100uS = period
-    media onda a 50Hz = 20ms/2 =1 0mS
-    10mS/100uS= 100 periodos cada medio ciclo
-*/
+void spwm_init();
 
-void spwm_init(spwm_t *onda);
+void spwm_process();
 
-void spwm_process(spwm_t *onda);
-
+void spwm_changeFrecuency(uint16_t freq);
 
 /*=====[Prototipos de funciones publicas de interrupcion]====================*/
 

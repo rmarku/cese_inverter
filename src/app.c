@@ -16,6 +16,7 @@
 #include "delay.h"
 #include "buffercircular.h"
 #include "spwm.h"
+#include "mef.h"
 
 /*=====[Macros de definicion de constantes privadas]=========================*/
 /*=====[Macros estilo funcion privadas]======================================*/
@@ -32,17 +33,18 @@
  * @return int
  */
 int main(void) {
-
     delay_t led;
     delay_t uart;
 
-    spwm_t onda;
     // Inicializo la placa.
     bsp_init();
 
     delayConfig(&led, 500);
     delayConfig(&uart, 2000);
     spwm_init(&onda);
+
+    // Muestro el menú por primera vez
+    menu_show();
 
     // Loop infinito (Super Loop)
     while (1) {
@@ -58,9 +60,11 @@ int main(void) {
             uartSend('A');
         }
 
+        // Proceso generador de onda
         spwm_process(&onda);
 
-        // Procesado maquina de estados
+        // Proceso la maquina de estados
+        mef_process();
     }
     return 0; // nunca llegaría
 }

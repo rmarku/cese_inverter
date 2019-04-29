@@ -99,7 +99,7 @@ void setPWM(uint16_t duty) {
  *
  * @param c
  */
-inline void uartSend(char c) {
+void uartSend(char c) {
     LL_USART_TransmitData8(USART1, c);
 }
 /**
@@ -109,7 +109,7 @@ inline void uartSend(char c) {
  * @return true
  * @return false
  */
-inline bool uartSendReady(char c) {
+bool uartSendReady() {
     return 1 == LL_USART_IsActiveFlag_TXE(USART1);
 }
 /**
@@ -117,8 +117,8 @@ inline bool uartSendReady(char c) {
  *
  * @param c
  */
-inline void uartRecibe(char c) {
-    LL_USART_ReceiveData8(USART1);
+char uartRecibe() {
+    return (char) LL_USART_ReceiveData8(USART1);
 }
 /**
  * @brief
@@ -127,7 +127,7 @@ inline void uartRecibe(char c) {
  * @return true
  * @return false
  */
-inline bool uartRecibeHasData(char c) {
+bool uartRecibeHasData() {
     return 1 == LL_USART_IsActiveFlag_RXNE(USART1);
 }
 
