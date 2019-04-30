@@ -34,6 +34,7 @@ bool delayEnded(delay_t *delay) {
     return res;
 }
 
+///
 void delay_1ms() {
     tick_counter++;
 }

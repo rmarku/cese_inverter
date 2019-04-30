@@ -1,51 +1,65 @@
 /**
  * @file app.c
  * @author Ricardo Martín Marcucci
- * @brief Archivo principal de la aplicación
+ * @brief
+
+Archivo principal de la aplicación
+
+1. Plataforma embebida: BluePill (STM32f103)
+
+2. Aplicación:
+    - Se realizará una aplicación utilice el módulo de PWM del microcontrolador para generar una señal senoidal (SPWM).
+    - El software deberá también tomar muestras de dos canales de ADC y enviarlos al puerto serie.
+    - El software podrá recibir por puerto serie un comando de configuración que cambie la frecuencia de la señal sinusoidal Generada (MEF).
+    - El software utilizará la HAL provista por el fabricante, implementará una capa BSP para abstraerse de los periféricos y una capa de aplicación donde se implemente la lógica.
+
+3. Periféricos:
+    - ADC
+    - PWM
+    - UART
+    - GPIO
+
  * @version 0.1
  * @date 2019-04-24
  *
  * @copyright Copyright (c) 2019
  *
- */
-/*=====[Inclusion de su propia cabecera]=====================================*/
+ * @defgroup TPF Programación de Microcontroladores
+ * @brief Trabajo Final de materia
+ * @{ */
+
+
+/* ----------------------------------------------------------------------------------------------------------------
+ * Inclusion de cabeceras
+ * ---------------------------------------------------------------------------------------------------------------- */
+
 #include "app.h"
 
-/*=====[Inclusiones de dependencias de funciones privadas]===================*/
 #include "bsp/bsp.h"
 #include "delay.h"
-#include "buffercircular.h"
 #include "spwm.h"
 #include "mef.h"
 #include "terminal.h"
 
-/*=====[Macros de definicion de constantes privadas]=========================*/
-/*=====[Macros estilo funcion privadas]======================================*/
-/*=====[Definiciones de tipos de datos privados]=============================*/
-/*=====[Definiciones de Variables globales publicas externas]================*/
-/*=====[Definiciones de Variables globales publicas]=========================*/
-/*=====[Definiciones de Variables globales privadas]=========================*/
-/*=====[Prototipos de funciones privadas]====================================*/
+/* ----------------------------------------------------------------------------------------------------------------
+ * Funciones Publicas
+ * ---------------------------------------------------------------------------------------------------------------- */
 
-/*=====[Implementaciones de funciones publicas]==============================*/
 /**
- * @brief Aplicación pricipal
+ * @brief Aplicación pricipal con SuperLoop
  *
- * @return int
+ * @return int Nunca retornaría
  */
 int main(void) {
     delay_t led;
-    delay_t uart;
 
     // Inicializo la placa.
     bsp_init();
 
+    //Inicializo los modulos de applicación
     delayConfig(&led, 500);
-    delayConfig(&uart, 2000);
     spwm_init();
     mef_init();
-
-    // Muestro el menú por primera vez
 
     // Loop infinito (Super Loop)
     while (1) {
@@ -67,12 +81,12 @@ int main(void) {
     return 0; // nunca llegaría
 }
 
+
 /**
- * @brief Función llamada por el BSP cada 1ms
- *
+ * @brief llamada Callback del servicio prestado por BSP, se llama cada 1ms
  */
 void app_1ms() {
     delay_1ms();
 }
 
-/*=====[Implementaciones de funciones privadas]==============================*/
+/** @} Doxygen module end*/

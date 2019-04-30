@@ -9,3 +9,6 @@
 build
 old
 .gdb_history
+doc
+.idea
+compile_commands.json
