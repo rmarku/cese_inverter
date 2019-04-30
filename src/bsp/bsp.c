@@ -133,9 +133,9 @@ bool uartRecibeHasData() {
 
 /**
  * @brief retorna el contador de 0.1ms
- * 
+ *
  */
-uint64_t get_01msTick(){
+uint64_t get_01msTick() {
     return tick_01ms;
 }
 
@@ -215,20 +215,23 @@ void bsp_delay(uint32_t d) {
 }
 
 
+ADC_TypeDef *adcs[2]= {ADC1,ADC2};
 /**
  * @brief
  *
  */
-void adc_ConvertionStart() {
-    LL_ADC_REG_StartConversionSWStart(ADC1);
+void adc_ConvertionStart(uint8_t adc) {
+    adc--;
+    LL_ADC_REG_StartConversionSWStart(adcs[adc]);
 }
 
 /**
  * @brief
  *
  */
-bool adc_ConvertionStop() {
-    return 1 == LL_ADC_IsActiveFlag_EOS(ADC1);
+bool adc_ConvertionStoped(uint8_t adc) {
+    adc--;
+    return 1 == LL_ADC_IsActiveFlag_EOS(adcs[adc]);
 }
 
 /**
@@ -236,8 +239,9 @@ bool adc_ConvertionStop() {
  *
  * @return uint16_t
  */
-uint16_t adc_getData() {
-    return LL_ADC_REG_ReadConversionData12(ADC1);
+uint16_t adc_getData(uint8_t adc) {
+    adc--;
+    return LL_ADC_REG_ReadConversionData12(adcs[adc]);
 }
 
 

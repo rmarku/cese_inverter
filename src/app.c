@@ -17,6 +17,7 @@
 #include "buffercircular.h"
 #include "spwm.h"
 #include "mef.h"
+#include "terminal.h"
 
 /*=====[Macros de definicion de constantes privadas]=========================*/
 /*=====[Macros estilo funcion privadas]======================================*/
@@ -41,10 +42,10 @@ int main(void) {
 
     delayConfig(&led, 500);
     delayConfig(&uart, 2000);
-    spwm_init(&onda);
+    spwm_init();
+    mef_init();
 
     // Muestro el menú por primera vez
-    menu_show();
 
     // Loop infinito (Super Loop)
     while (1) {
@@ -54,14 +55,11 @@ int main(void) {
             delayNext(&led, 100);
         }
 
-        // Procesado de UART
-        if (delayEnded(&uart)) {
-            delayNext(&uart, 2000);
-            uartSend('A');
-        }
+        // Procesado de UART mediante terminal
+        terminal_process();
 
         // Proceso generador de onda
-        spwm_process(&onda);
+        spwm_process();
 
         // Proceso la maquina de estados
         mef_process();

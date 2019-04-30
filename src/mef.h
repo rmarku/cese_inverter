@@ -14,5 +14,4 @@ void mef_init(void);
 
 void mef_process();
 
-void mef_cambiar(void(*fun)(void));
 

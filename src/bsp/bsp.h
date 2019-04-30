@@ -51,8 +51,10 @@ bool uartSendReady();
 char uartRecibe();
 bool uartRecibeHasData();
 
-
-
+// Servicios del ADC
+void adc_ConvertionStart(uint8_t adc);
+bool adc_ConvertionStoped(uint8_t adc);
+uint16_t adc_getData(uint8_t adc);
 
 
 /*=====[Prototipos de funciones publicas de interrupcion]====================*/
