@@ -60,9 +60,11 @@ void spwm_process() {
     }
 
     // Calculo posición de la muestra entre 0 y 199 según el tick actual
-    // Lo realizo en 128 mas arriba para no utilizar floats
+    // Lo realizo en 128 mas arriba para no utilizar floats y aprovechar
+    // que multiplicaciones y diviciones por potencias de 2 son rapidas.
     idx = ((TAMANIO_ONDA * 4 * 128) / ticks_ciclo * current) / 128;
 
+    // TODO: Verificar los cálculos que por ahí según la frecuencia seteada se pasa el indice
     if (current >= ticks_ciclo * 3 / 4) { // 4to Cuarto
         idx = TAMANIO_ONDA * 4 - idx - 1;
         value = 512 - onda_data[idx];
