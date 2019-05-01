@@ -60,6 +60,7 @@ int main(void) {
     delayConfig(&led, 500);
     spwm_init();
     mef_init();
+    terminal_configurar();
 
     // Loop infinito (Super Loop)
     while (1) {

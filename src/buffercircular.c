@@ -1,5 +1,5 @@
 /**
- * @file buffercircular.h
+ * @file buffercircular.c
  * @author Ricardo Martín Marcucci
  * @brief Implementación de un buffer circular (circular queue)
  *
@@ -117,5 +117,3 @@ int bc_peekFirst(bufferc_t *bc, char *dato) {
     *dato = bc->data[bc->inicio];
     return 0;
 }
-
-/** @} Doxygen module end*/

@@ -1,14 +1,23 @@
-
-
+/**
+ * @file terminal_color.h
+ * @author Ricardo Martín Marcucci
+ * @brief Definiciones de constantes para colores y formatos de la terminal
+ *
+ * @copyright Copyright (c) 2019
+ *
+ * @defgroup term Terminal por puerto serie
+ * @ingroup TPF
+ * @{
+ */
 #ifndef __TERMINAL_COLORS_H
 #define __TERMINAL_COLORS_H
 
 
 /** @brief Codigo de nueva linea */
-#define NEW_LINE        "\r\n"
+#define NEW_LINE                            "\r\n"
 
 /** @brief Codigo de color rojo */
-#define TERMINAL_TEXTO_ROJO         "\x1B[31m"
+#define TERMINAL_TEXTO_ROJO                 "\x1B[31m"
 
 // Colores
 /** @brief Codigo de color verde */
@@ -34,4 +43,6 @@
 /** @brief Codigo de color rojo claro */
 #define TERMINAL_TEXTO_UNDERLINE            "\x1B[4m"
 
-#endif //PROYECTOPROG_UC_TERMINAL_COLORS_H
+#endif //  __TERMINAL_COLORS_H
+
+/** @} Doxygen module end*/

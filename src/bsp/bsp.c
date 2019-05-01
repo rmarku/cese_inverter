@@ -1,17 +1,23 @@
 /**
  * @file bsp.c
- * @author Marcucci Ricardo Martín
- * @brief Board Support Package,
- * @version 0.1
- * @date 2019-04-22
+ * @author Ricardo Martín Marcucci
+ * @brief Capa de aislación entre el Hardware y la aplicación
  *
  * @copyright Copyright (c) 2019
  *
+ * @defgroup bsp Boar Support Package
+ * @ingroup TPF
+ * @{
  */
-/*=====[Inclusion de su propia cabecera]=====================================*/
+
+/* ----------------------------------------------------------------------------------------------------------------
+ * Inclusion de cabeceras
+ * ---------------------------------------------------------------------------------------------------------------- */
+
+#include <stdint.h>
 #include "bsp.h"
 
-/*=====[Inclusiones de dependencias de funciones privadas]===================*/
+// Funciones de la HAL de ST
 #include "stm32f1xx.h"
 #include "stm32f1xx_ll_adc.h"
 #include "stm32f1xx_ll_bus.h"
@@ -25,22 +31,17 @@
 #include "stm32f1xx_ll_tim.h"
 #include "stm32f1xx_ll_usart.h"
 #include "stm32f1xx_ll_utils.h"
-#include <stdint.h>
 
-/*=====[Macros de definicion de constantes privadas]=========================*/
+/* ----------------------------------------------------------------------------------------------------------------
+ * Macros Privadas
+ * ---------------------------------------------------------------------------------------------------------------- */
 
 #define corrienteIn_Pin LL_GPIO_PIN_0
-#define corrienteIn_GPIO_Port GPIOA
 #define tensionIn_Pin LL_GPIO_PIN_1
-#define tensionIn_GPIO_Port GPIOA
 #define tensionOut_Pin LL_GPIO_PIN_2
-#define tensionOut_GPIO_Port GPIOA
 #define corrienteOut_Pin LL_GPIO_PIN_3
-#define corrienteOut_GPIO_Port GPIOA
 #define PWMn_Pin LL_GPIO_PIN_7
-#define PWMn_GPIO_Port GPIOA
 #define PWM_Pin LL_GPIO_PIN_8
-#define PWM_GPIO_Port GPIOA
 #ifndef NVIC_PRIORITYGROUP_0
 #define NVIC_PRIORITYGROUP_0                                                   \
     ((uint32_t)0x00000007) /*!< 0 bit  for pre-emption priority,               \
@@ -59,30 +60,34 @@
                                 0 bit  for subpriority */
 #endif
 
-/*=====[Macros estilo funcion privadas]======================================*/
-
-/*=====[Definiciones de tipos de datos privados]=============================*/
-
-/*=====[Definiciones de Variables globales publicas externas]================*/
-
-/*=====[Definiciones de Variables globales publicas]=========================*/
-
-/*=====[Definiciones de Variables globales privadas]=========================*/
-
+/* ----------------------------------------------------------------------------------------------------------------
+ * Variables Privadas
+ * ---------------------------------------------------------------------------------------------------------------- */
+/// \brief Contador de ticks a 0.1ms
 uint64_t tick_01ms = 0;
 
-/*=====[Prototipos de funciones privadas]====================================*/
+/* ----------------------------------------------------------------------------------------------------------------
+ * Prototipos de Funciones Privadas
+ * ---------------------------------------------------------------------------------------------------------------- */
 
 void SystemClock_Config(void);
 
 void gpio_init(void);
+
 void adc1_init(void);
+
 void adc2_init(void);
+
 void uart_init(void);
+
 void timer1_init(void);
 
 void Error_Handler(void);
-/*=====[Implementaciones de funciones publicas]==============================*/
+
+
+/* ----------------------------------------------------------------------------------------------------------------
+ * Funciones Publicas
+ * ---------------------------------------------------------------------------------------------------------------- */
 
 /**
  * @brief Modificar el ciclo de trabajo de la onda.
@@ -90,42 +95,39 @@ void Error_Handler(void);
  * @param duty valor entre 0 -> 0% y 1000 -> 100%
  */
 void setPWM(uint16_t duty) {
-    LL_TIM_OC_SetCompareCH1(TIM1,
-                            ((LL_TIM_GetAutoReload(TIM1) + 1) * duty / 1000));
+    LL_TIM_OC_SetCompareCH1(TIM1, ((LL_TIM_GetAutoReload(TIM1) + 1) * duty / 1000));
 }
 
 /**
- * @brief
+ * @brief Enviar un caracter por puerto serie
  *
- * @param c
+ * @param c el caracter que se desea enviar
  */
 void uartSend(char c) {
     LL_USART_TransmitData8(USART1, c);
 }
 /**
- * @brief
+ * @brief Verificar si se puede enviar datos
  *
- * @param c
- * @return true
- * @return false
+ * @retval true Se pueden enviar datos
+ * @retval false No se pueden enviar datos
  */
 bool uartSendReady() {
     return 1 == LL_USART_IsActiveFlag_TXE(USART1);
 }
+
 /**
- * @brief
- *
- * @param c
+ * @brief Recibe un dato del puerto serie
+ * @return Caracter recivido
  */
 char uartRecibe() {
     return (char) LL_USART_ReceiveData8(USART1);
 }
+
 /**
- * @brief
- *
- * @param c
- * @return true
- * @return false
+ * @brief Verifica si hay datos nuevos para ser leidos
+ * @retval true Hay nuevo dato
+ * @retval false No hay dato nuevo
  */
 bool uartRecibeHasData() {
     return 1 == LL_USART_IsActiveFlag_RXNE(USART1);
@@ -138,8 +140,6 @@ bool uartRecibeHasData() {
 uint64_t get_01msTick() {
     return tick_01ms;
 }
-
-
 
 
 /**
@@ -166,10 +166,8 @@ void bsp_init() {
     uart_init();
 
     // Habilito el PWM
-    LL_TIM_CC_EnableChannel(TIM1,
-                            LL_TIM_CHANNEL_CH1N); /* Enable output on channel */
-    LL_TIM_CC_EnableChannel(TIM1,
-                            LL_TIM_CHANNEL_CH1); /* Enable output on channel */
+    LL_TIM_CC_EnableChannel(TIM1, LL_TIM_CHANNEL_CH1N); /* Enable output on channel */
+    LL_TIM_CC_EnableChannel(TIM1, LL_TIM_CHANNEL_CH1); /* Enable output on channel */
 
     LL_TIM_EnableCounter(TIM1);
 
@@ -182,8 +180,9 @@ void bsp_init() {
     LL_SYSTICK_EnableIT();
 }
 
+
 /**
- * @brief
+ * @brief Toglea el led de la BluePill
  *
  */
 void led_toggle() {
@@ -191,14 +190,15 @@ void led_toggle() {
 }
 
 /**
- * @brief
+ * @brief Prendo el led de la BluePill
  *
  */
 void led_on() {
     LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_13);
 }
+
 /**
- * @brief
+ * @brief Apago el led de la BluePill
  *
  */
 void led_off() {
@@ -206,19 +206,20 @@ void led_off() {
 }
 
 /**
- * @brief
+ * @brief Espera una cantidad de ms
  *
- * @param d
+ * @param d cantidad de ms a esperar
  */
 void bsp_delay(uint32_t d) {
     LL_mDelay(d);
 }
 
+/// \brief Arreglo de los ADCs disponibles para poder ser accedidos por indices (0 y 1)
+ADC_TypeDef *adcs[2] = {ADC1, ADC2};
 
-ADC_TypeDef *adcs[2]= {ADC1,ADC2};
 /**
- * @brief
- *
+ * @brief Comienzo una conversión de ADC
+ * @param adc El ADC que utilizo (0 o 1)
  */
 void adc_ConvertionStart(uint8_t adc) {
     adc--;
@@ -226,8 +227,9 @@ void adc_ConvertionStart(uint8_t adc) {
 }
 
 /**
- * @brief
- *
+ * @brief Verifico si la conversión terminó
+ * @param adc El ADC que utilizo (0 o 1)
+ * @return
  */
 bool adc_ConvertionStoped(uint8_t adc) {
     adc--;
@@ -235,9 +237,9 @@ bool adc_ConvertionStoped(uint8_t adc) {
 }
 
 /**
- * @brief
- *
- * @return uint16_t
+ * @brief Leo el dato convertido del adc
+ * @param adc El ADC que utilizo (0 o 1)
+ * @return Valor leido por el ADC
  */
 uint16_t adc_getData(uint8_t adc) {
     adc--;
@@ -245,19 +247,8 @@ uint16_t adc_getData(uint8_t adc) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
 /**
- * @brief Configuración de System Clock
- * @retval None
+ * @brief Configuración del System Clock
  */
 void SystemClock_Config(void) {
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_0);
@@ -292,7 +283,7 @@ void SystemClock_Config(void) {
 }
 
 /**
- * @brief
+ * @brief Inicialización del GPIO del led
  *
  */
 void gpio_init(void) {
@@ -312,6 +303,9 @@ void gpio_init(void) {
     LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 }
 
+/**
+ * @brief Inicialización del ADC1
+ */
 void adc1_init(void) {
     LL_ADC_InitTypeDef ADC_InitStruct = {0};
     LL_ADC_CommonInitTypeDef ADC_CommonInitStruct = {0};
@@ -329,7 +323,7 @@ void adc1_init(void) {
     PA3   ------> ADC1_IN3
     */
     GPIO_InitStruct.Pin =
-        corrienteIn_Pin | tensionIn_Pin | tensionOut_Pin | corrienteOut_Pin;
+            corrienteIn_Pin | tensionIn_Pin | tensionOut_Pin | corrienteOut_Pin;
     GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
     LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
@@ -352,7 +346,11 @@ void adc1_init(void) {
     LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_1,
                                   LL_ADC_SAMPLINGTIME_1CYCLE_5);
 }
-/* ADC2 init function */
+
+
+/**
+ * @brief Inicialización del ADC2
+ */
 void adc2_init(void) {
     LL_ADC_InitTypeDef ADC_InitStruct = {0};
     LL_ADC_REG_InitTypeDef ADC_REG_InitStruct = {0};
@@ -369,7 +367,7 @@ void adc2_init(void) {
     PA3   ------> ADC2_IN3
     */
     GPIO_InitStruct.Pin =
-        corrienteIn_Pin | tensionIn_Pin | tensionOut_Pin | corrienteOut_Pin;
+            corrienteIn_Pin | tensionIn_Pin | tensionOut_Pin | corrienteOut_Pin;
     GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
     LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
@@ -391,6 +389,9 @@ void adc2_init(void) {
                                   LL_ADC_SAMPLINGTIME_1CYCLE_5);
 }
 
+/**
+ * @brief Inicialización de la UART1
+ */
 void uart_init(void) {
     LL_USART_InitTypeDef USART_InitStruct = {0};
 
@@ -423,6 +424,9 @@ void uart_init(void) {
     LL_USART_Enable(USART1);
 }
 
+/**
+ * @brief Inicialización del Timer1 y PWM
+ */
 void timer1_init(void) {
     LL_TIM_InitTypeDef TIM_InitStruct = {0};
     LL_TIM_OC_InitTypeDef TIM_OC_InitStruct = {0};
@@ -436,9 +440,9 @@ void timer1_init(void) {
     TIM_InitStruct.Prescaler = __LL_TIM_CALC_PSC(SystemCoreClock, 500000);
     TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
     TIM_InitStruct.Autoreload =
-        __LL_TIM_CALC_ARR(TimOutClock, TIM_InitStruct.Prescaler, 30000);
+            __LL_TIM_CALC_ARR(TimOutClock, TIM_InitStruct.Prescaler, 30000);
     TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
-    TIM_InitStruct.RepetitionCounter = (uint8_t)0x00;
+    TIM_InitStruct.RepetitionCounter = (uint8_t) 0x00;
     LL_TIM_Init(TIM1, &TIM_InitStruct);
     LL_TIM_SetClockSource(TIM1, LL_TIM_CLOCKSOURCE_INTERNAL);
     LL_TIM_OC_EnablePreload(TIM1, LL_TIM_CHANNEL_CH1);
@@ -476,24 +480,28 @@ void timer1_init(void) {
 
     LL_GPIO_AF_RemapPartial_TIM1();
 }
+/* ----------------------------------------------------------------------------------------------------------------
+ * Implementaciones de funciones de interrupcion
+ * ---------------------------------------------------------------------------------------------------------------- */
 
-/*=====[Implementaciones de funciones de interrupcion publicas]==============*/
 void NMI_Handler(void) {}
 
 /**
- * @brief Versión devil del servicio para la aplicación
+ * @brief Versión debil del servicio para la aplicación
+ * Debería ser implementado en la aplicación si utiliza el servicio
  *
  */
 void __attribute__((weak)) app_1ms();
 
 /**
- * @brief This function handles System tick timer.
+ * @brief Interrupción del sistick
+ * Gestiona llamadas a servicios de 1ms
  */
 void SysTick_Handler(void) {
     tick_01ms++;
 
     // cada 10 ticks 1ms
-    if(tick_01ms%10 == 0) {
+    if (tick_01ms % 10 == 0) {
         app_1ms();
     }
 }
@@ -546,7 +554,10 @@ void DebugMon_Handler(void) {}
 void PendSV_Handler(void) {}
 
 /**
- * @brief  Función para errores de las funciones HAL
+ * @brief  Función para errores de las funciones HAL de ST
  * @retval None
  */
 void Error_Handler(void) {}
+
+
+/** @} Doxygen module end*/
